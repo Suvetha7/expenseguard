@@ -353,12 +353,12 @@ section[data-testid="stSidebar"] .stRadio label:hover {{
 def sec(label, icon=""):
     st.markdown(f'<div class="sec-label">{icon}&nbsp;{label}</div>', unsafe_allow_html=True)
 
-def kpi(value, label, delta="", delta_type="ok", accent=ACCENT):
-    return f"""<div class="kpi-card" style="--accent-color:{accent}">
+def kpi(col, value, label, delta="", delta_type="ok", accent=ACCENT):
+    col.markdown(f"""<div class="kpi-card" style="--accent-color:{accent}">
         <div class="kpi-value">{value}</div>
         <div class="kpi-label">{label}</div>
-        {'<div class="kpi-delta ' + delta_type + '">' + delta + '</div>' if delta else ''}
-    </div>"""
+        {"<div class='kpi-delta " + delta_type + "'>" + delta + "</div>" if delta else ""}
+    </div>""", unsafe_allow_html=True)
 
 def plotly_fig(fig, height=300, title=""):
     if title:
@@ -494,14 +494,13 @@ if page == "Overview":
         total_amt = df_pred["amount"].sum()
 
         sec("Key Metrics", "◈")
-        st.markdown(f"""<div class="kpi-row">
-            {kpi(f"{total:,}", "Total Transactions", "", "ok", BLUE)}
-            {kpi(f"{flagged:,}", "Anomalies Flagged", f"▲ {flagged/total*100:.1f}% of total", "up", RED)}
-            {kpi(f"${flag_amt/1e6:.2f}M", "At-Risk Amount", f"{flag_amt/total_amt*100:.1f}% of spend", "up", ACCENT)}
-            {kpi(f"{low_c:,}", "Need Review", "Low confidence", "warn", PURPLE)}
-            {kpi(f"{chain['length']}", "Ledger Blocks", "SHA-256 secured", "ok", GREEN)}
-            {kpi(f"{auc:.4f}", "Best AUC", bm[:14], "ok", ACCENT)}
-        </div>""", unsafe_allow_html=True)
+        _c = st.columns(6)
+        kpi(_c[0], f"{total:,}", "Total Transactions", "", "ok", BLUE)
+        kpi(_c[1], f"{flagged:,}", "Anomalies Flagged", f"▲ {flagged/total*100:.1f}% of total", "up", RED)
+        kpi(_c[2], f"${flag_amt/1e6:.2f}M", "At-Risk Amount", f"{flag_amt/total_amt*100:.1f}% of spend", "up", ACCENT)
+        kpi(_c[3], f"{low_c:,}", "Need Review", "Low confidence", "warn", PURPLE)
+        kpi(_c[4], f"{chain['length']}", "Ledger Blocks", "SHA-256 secured", "ok", GREEN)
+        kpi(_c[5], f"{auc:.4f}", "Best AUC", bm[:14], "ok", ACCENT)
 
         sec("Anomaly Breakdown", "◑")
         col1, col2 = st.columns(2)
@@ -802,12 +801,11 @@ elif page == "Immutable Ledger":
     sec("Chain Status", "⬡")
 
     sc = GREEN if chain_info["valid"] else RED
-    st.markdown(f"""<div class="kpi-row">
-        {kpi("VALID" if chain_info["valid"] else "BROKEN", "Chain Integrity", "SHA-256 verified", "ok", sc)}
-        {kpi(str(chain_info["length"]), "Total Blocks", "Immutable records", "ok", ACCENT)}
-        {kpi("SHA-256", "Hash Algorithm", "Bitcoin-grade security", "ok", PURPLE)}
-        {kpi("AES/Fernet", "PII Encryption", "Employee & vendor data", "ok", BLUE)}
-    </div>""", unsafe_allow_html=True)
+    _c = st.columns(4)
+    kpi(_c[0], "VALID" if chain_info["valid"] else "BROKEN", "Chain Integrity", "SHA-256 verified", "ok", sc)
+    kpi(_c[1], str(chain_info["length"]), "Total Blocks", "Immutable records", "ok", ACCENT)
+    kpi(_c[2], "SHA-256", "Hash Algorithm", "Bitcoin-grade security", "ok", PURPLE)
+    kpi(_c[3], "AES/Fernet", "PII Encryption", "Employee & vendor data", "ok", BLUE)
 
     ledger_df = get_ledger_df()
     if ledger_df.empty:
@@ -862,11 +860,10 @@ elif page == "Analytics":
         flagged_amt = flagged["amount"].sum()
 
         sec("Financial Impact", "◈")
-        st.markdown(f"""<div class="kpi-row">
-            {kpi(f"${flagged_amt/1e6:.2f}M", "Total At-Risk", f"{flagged_amt/total_amt*100:.1f}% of spend", "up", RED)}
-            {kpi(f"${flagged['amount'].mean():,.0f}", "Avg Flagged Amount", "per transaction", "warn", ACCENT)}
-            {kpi(f"${total_amt/1e6:.2f}M", "Total Spend", "all transactions", "ok", BLUE)}
-        </div>""", unsafe_allow_html=True)
+        _c = st.columns(3)
+        kpi(_c[0], f"${flagged_amt/1e6:.2f}M", "Total At-Risk", f"{flagged_amt/total_amt*100:.1f}% of spend", "up", RED)
+        kpi(_c[1], f"${flagged['amount'].mean():,.0f}", "Avg Flagged Amount", "per transaction", "warn", ACCENT)
+        kpi(_c[2], f"${total_amt/1e6:.2f}M", "Total Spend", "all transactions", "ok", BLUE)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -1059,12 +1056,11 @@ elif page == "Impact Calculator":
         false_positives  = n_flagged * (1 - precision)
 
         sec("Financial Impact", "◈")
-        st.markdown(f"""<div class="kpi-row">
-            {kpi(f"${fraud_prevented:,.0f}", "Fraud Prevented", f"Recovery {recovery_rate:.0%}", "ok", GREEN)}
-            {kpi(f"${audit_cost:,.0f}", "Audit Cost", f"{n_flagged} reviews", "warn", ACCENT)}
-            {kpi(f"${net_savings:,.0f}", "Net Saving", "Prevented − Cost", "ok" if net_savings>0 else "up", GREEN if net_savings>0 else RED)}
-            {kpi(f"{roi:.0f}%", "ROI", "on audit investment", "ok", PURPLE)}
-        </div>""", unsafe_allow_html=True)
+        _c = st.columns(4)
+        kpi(_c[0], f"${fraud_prevented:,.0f}", "Fraud Prevented", f"Recovery {recovery_rate:.0%}", "ok", GREEN)
+        kpi(_c[1], f"${audit_cost:,.0f}", "Audit Cost", f"{n_flagged} reviews", "warn", ACCENT)
+        kpi(_c[2], f"${net_savings:,.0f}", "Net Saving", "Prevented - Cost", "ok" if net_savings>0 else "up", GREEN if net_savings>0 else RED)
+        kpi(_c[3], f"{roi:.0f}%", "ROI", "on audit investment", "ok", PURPLE)
 
         sec("With vs Without ExpenseGuard", "◑")
         fig = go.Figure()
