@@ -64,7 +64,7 @@ st.markdown(f"""
 section[data-testid="stSidebar"] {{
     background: {BG} !important;
     border-right: 1px solid {BORDER} !important;
-    width: 220px !important;
+    width: 260px !important;
     padding: 0 !important;
 }}
 section[data-testid="stSidebar"] > div {{
@@ -433,13 +433,16 @@ section[data-testid="stSidebar"] .stRadio label[data-baseweb] {{
 
 # ── HELPERS ───────────────────────────────────────────────────────────────────
 def kpi(col, value, label, delta="", dtype="ok", color=LIME):
-    arrow = "▲" if dtype == "up" else ("●" if dtype == "warn" else "▲")
-    delta_html = f'<div class="kpi-delta {dtype}">{arrow} {delta}</div>' if delta else ""
-    col.markdown(f"""<div class="kpi-wrap" style="--kc:{color}">
-        <div class="kpi-label">{label}</div>
-        <div class="kpi-value">{value}</div>
-        {delta_html}
-    </div>""", unsafe_allow_html=True)
+    arrow = "&#9650;" if dtype != "warn" else "&#9679;"
+    delta_part = f'<div class="kpi-delta {dtype}">{arrow} {delta}</div>' if delta else '<div></div>'
+    col.markdown(
+        '<div class="kpi-wrap" style="--kc:' + color + '">'
+        '<div class="kpi-label">' + label + '</div>'
+        '<div class="kpi-value">' + str(value) + '</div>'
+        + delta_part +
+        '</div>',
+        unsafe_allow_html=True
+    )
 
 def sec(label):
     st.markdown(f'<div class="sec">{label}</div>', unsafe_allow_html=True)
