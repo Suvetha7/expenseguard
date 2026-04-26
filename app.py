@@ -50,8 +50,9 @@ st.markdown(f"""
 .block-container{{padding:0!important;max-width:100%!important;}}
 
 /* Hide default sidebar completely */
-section[data-testid="stSidebar"]{{display:none!important;}}
+section[data-testid="stSidebar"]{{display:none!important;width:0!important;}}
 [data-testid="collapsedControl"]{{display:none!important;}}
+.css-1d391kg, .css-163ttbj, [data-testid="stSidebarNav"]{{display:none!important;}}
 
 /* ── TOP NAV ── */
 .topbar{{
@@ -75,14 +76,14 @@ section[data-testid="stSidebar"]{{display:none!important;}}
 }}
 .topbar-nav{{display:flex;align-items:center;gap:4px;}}
 .nav-btn{{
-    padding:6px 14px;border-radius:8px;
-    font-size:0.78rem;font-weight:500;color:{GRAY};
-    cursor:pointer;transition:all 0.15s;
-    border:none;background:transparent;
-    white-space:nowrap;
+    padding:7px 16px;border-radius:8px;
+    font-size:0.75rem;font-weight:500;color:{GRAY};
+    cursor:pointer;transition:all 0.18s cubic-bezier(0.4,0,0.2,1);
+    border:1px solid transparent;background:transparent;
+    white-space:nowrap;letter-spacing:0.01em;
 }}
-.nav-btn:hover{{background:{CARD};color:{WHITE};}}
-.nav-btn.active{{background:{CARD2};color:{WHITE};border:1px solid {BDR};}}
+.nav-btn:hover{{background:{CARD};color:{WHITE};border-color:{BDR};}}
+.nav-btn.active{{background:{CARD2};color:{WHITE};border-color:{BDR};box-shadow:0 0 0 1px {BDR};}}
 .topbar-right{{display:flex;align-items:center;gap:10px;}}
 .status-pill{{
     display:flex;align-items:center;gap:6px;
@@ -101,7 +102,10 @@ section[data-testid="stSidebar"]{{display:none!important;}}
 .train-btn:hover{{background:#d4f040;}}
 
 /* ── PAGE WRAP ── */
-.pw{{padding:28px 32px;}}
+.pw{{padding:28px 32px;animation:pageIn 0.3s ease both;}}
+@keyframes pageIn{{from{{opacity:0;transform:translateY(8px);}}to{{opacity:1;transform:translateY(0);}}}}
+.kc{{animation:cardIn 0.35s ease both;}}
+@keyframes cardIn{{from{{opacity:0;transform:translateY(12px);}}to{{opacity:1;transform:translateY(0);}}}}
 
 /* ── PAGE TITLE ── */
 .ptitle{{
@@ -168,12 +172,28 @@ section[data-testid="stSidebar"]{{display:none!important;}}
 
 /* ── BUTTONS ── */
 .stButton>button{{
-    background:{LIME}!important;color:{BG}!important;border:none!important;
-    border-radius:50px!important;font-size:0.8rem!important;font-weight:700!important;
-    padding:10px 24px!important;transition:all 0.2s!important;width:100%!important;
+    background:transparent!important;color:{GRAY}!important;
+    border:1px solid {BDR}!important;border-radius:8px!important;
+    font-size:0.72rem!important;font-weight:500!important;
+    padding:7px 12px!important;width:100%!important;
     font-family:'Inter',sans-serif!important;
+    transition:all 0.18s cubic-bezier(0.4,0,0.2,1)!important;
+    white-space:nowrap!important;overflow:hidden!important;
+    text-overflow:ellipsis!important;
 }}
-.stButton>button:hover{{background:#d4f040!important;transform:translateY(-1px)!important;}}
+.stButton>button:hover{{
+    background:{CARD2}!important;color:{WHITE}!important;
+    border-color:{DIM}!important;
+    transform:translateY(-1px)!important;
+}}
+/* Active page button — first button is always Initialize */
+div[data-testid="column"]:last-child .stButton>button{{
+    background:{LIME}!important;color:{BG}!important;
+    border-color:{LIME}!important;font-weight:700!important;
+}}
+div[data-testid="column"]:last-child .stButton>button:hover{{
+    background:#d4f040!important;
+}}
 
 /* ── DATAFRAME ── */
 .stDataFrame{{border:1px solid {BDR}!important;border-radius:12px!important;overflow:hidden!important;}}
